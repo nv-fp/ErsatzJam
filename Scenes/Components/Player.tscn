@@ -1,4 +1,4 @@
-[gd_scene load_steps=97 format=3 uid="uid://0ibdsjupwq2u"]
+[gd_scene load_steps=100 format=3 uid="uid://0ibdsjupwq2u"]
 
 [ext_resource type="Script" path="res://Scripts/Components/Player.cs" id="1_wnxft"]
 [ext_resource type="Texture2D" uid="uid://b8575c3udd85q" path="res://Art/char_a_p1_0bas_humn_v01.png" id="2_7qpyv"]
@@ -19,6 +19,18 @@ region = Rect2(128, 0, 64, 64)
 [sub_resource type="AtlasTexture" id="AtlasTexture_hgvc3"]
 atlas = ExtResource("2_7qpyv")
 region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvxwh"]
+atlas = ExtResource("2_7qpyv")
+region = Rect2(0, 192, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvcqb"]
+atlas = ExtResource("2_7qpyv")
+region = Rect2(0, 384, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wm5e1"]
+atlas = ExtResource("2_7qpyv")
+region = Rect2(0, 320, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fbol8"]
 atlas = ExtResource("2_7qpyv")
@@ -263,7 +275,31 @@ animations = [{
 "texture": SubResource("AtlasTexture_hgvc3")
 }],
 "loop": true,
-"name": &"idle",
+"name": &"idle_down",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lvxwh")
+}],
+"loop": true,
+"name": &"idle_left",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvcqb")
+}],
+"loop": true,
+"name": &"idle_right",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wm5e1")
+}],
+"loop": true,
+"name": &"idle_up",
 "speed": 5.0
 }, {
 "frames": [{
@@ -699,7 +735,7 @@ RunSpeed = 260.0
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(2, 2)
 sprite_frames = SubResource("SpriteFrames_puryl")
-animation = &"walk_up"
+animation = &"run_down"
 
 [node name="Hitbox" type="CollisionShape2D" parent="."]
 position = Vector2(0, -6)

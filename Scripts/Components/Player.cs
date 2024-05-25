@@ -48,7 +48,6 @@ public partial class Player : CharacterBody2D {
         return WalkSpeed;
     }
 
-    private bool hasFixedDashSpeed = false;
     public override void _PhysicsProcess(double delta) {
         if (moveMode != MoveMode.Dash) {
             Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
@@ -125,63 +124,86 @@ public partial class Player : CharacterBody2D {
 
     static Color colorTransparent = new Color(1, 1, 1, 0);
 
+    // used to save dashVelocity at the time of pressing dash
     private Vector2 dashVelocity;
     private void StartDash() {
-        Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
-        dashVelocity = direction * DashSpeed;
+        // capture current direction and save for duration of dash
+        Vector2 impulse = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
+        if (impulse == Vector2.Zero) {
+            switch (angleToDirection(facing)) {
+                case Direction.Left: impulse = Vector2.Left; break;
+                case Direction.Right: impulse = Vector2.Right; break;
+                case Direction.Up: impulse = Vector2.Up; break;
+                case Direction.Down: impulse = Vector2.Down; break;
+            }
+        }
+        dashVelocity = impulse * DashSpeed;
 
+        // detach the effects sprite from the player since we want to leave it behind
         effectsSprite.TopLevel = true;
         effectsSprite.Position = GlobalPosition;
+
+        // set up the effects sprite te play
         effectsSprite.Play(EffectsAnimations.BloodDash.Name());
-        effectsSprite.Visible = true;
         effectsSprite.Scale = new Vector2(2, 2);
+        effectsSprite.Visible = true;
+
+        // start the tween that kicks off the dash
         var dashTween = GetTree().CreateTween();
         dashTween.TweenProperty(sprite, "modulate", colorTransparent, .15);
         dashTween.TweenCallback(Callable.From(() => moveMode = MoveMode.Dash));
     }
 
     private void StopDash() {
-        var dashTween = GetTree().CreateTween();
-        dashTween.TweenProperty(sprite, "modulate", Colors.White, .15);
-        dashTween.TweenCallback(Callable.From(() => effectsSprite.Visible = false));
-        moveMode = MoveMode.Walk;
-        effectsSprite.TopLevel = false;
-        effectsSprite.Position = Vector2.Zero;
-        hasFixedDashSpeed = false;
-        effectsSprite.Scale = Vector2.One;
+        var undashTween = GetTree().CreateTween();
+        undashTween.TweenProperty(sprite, "modulate", Colors.White, .15);
+        undashTween.TweenCallback(Callable.From(() => {
+            // unwind effects sprite changes
+            effectsSprite.Visible = false;
+            effectsSprite.TopLevel = false;
+            effectsSprite.Position = Vector2.Zero;
+            effectsSprite.Scale = Vector2.One;
+            // reset move mode and dash velocity
+            moveMode = MoveMode.Walk;
+            dashVelocity = Vector2.Zero;
+        }));
     }
 
-    private void HandleInput() {
-        if (moveMode == MoveMode.Dash) {
-            if (effectsSprite.IsPlaying()) {
-                return;
-            } else {
-                // TODO: this is a bad place to have this logic (in handle input??)
-                StopDash();
-            }
-        }
-
+    // returns if we should skip the rest of processing
+    private bool HandleInput() {
         if (Input.IsActionJustPressed(KeyName.PadA.Name())) {
             StartDash();
+            return true;
         }
 
         moveMode = Input.IsActionPressed(KeyName.PadX.Name())
             ? MoveMode.Run
             : MoveMode.Walk;
-
+        return false;
     }
 
     public override void _Process(double delta) {
-        HandleInput();
+        // check if we're dashing and bail or stop if relevant
         if (moveMode == MoveMode.Dash) {
+            if (effectsSprite.IsPlaying()) {
+                return;
+            } else {
+                StopDash();
+            }
+        }
+
+        if (HandleInput()) {
             return;
         }
-        maybeUpdateSensorPosition();
-        var facing = Velocity.AngleTo(Vector2.Up);
 
-        direction = angleToDirection(facing);
+        maybeUpdateSensorPosition();
+        if (Velocity != Vector2.Zero) {
+            facing = Velocity.AngleTo(Vector2.Up);
+            direction = angleToDirection(facing);
+        }
+
         if (Velocity == Vector2.Zero) {
-            sprite.Play("idle");
+            sprite.Play("idle_" + Util.DirectionToString(direction));
         } else {
             sprite.Play(moveMode.Name() + "_" + Util.DirectionToString(direction));
         }
