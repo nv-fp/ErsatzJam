@@ -15,6 +15,7 @@ namespace JamEnums {
     public enum MoveMode {
         Walk,
         Run,
+        Dash,
     };
 
     public enum KeyName {
@@ -24,6 +25,10 @@ namespace JamEnums {
         PadY,
         Menu,
     };
+
+    public enum EffectsAnimations {
+        BloodDash,
+    }
 
     public class Util {
         public static string DirectionToString(Direction d) {
@@ -50,6 +55,7 @@ namespace JamEnums {
             switch (s.ToLower().Trim()) {
                 case "run": return MoveMode.Run;
                 case "walk": return MoveMode.Walk;
+                case "dash": return MoveMode.Dash;
             }
             throw new ArgumentException("Unexpected move mode string: " + s);
         }
@@ -60,7 +66,9 @@ namespace JamEnums {
             switch (mode) {
                 case MoveMode.Run: return "run";
                 case MoveMode.Walk: return "walk";
+                case MoveMode.Dash: return "dash";
             }
+
             throw new ArgumentException("Unexpected move mode: " + mode);
         }
 
@@ -74,6 +82,14 @@ namespace JamEnums {
             }
 
             throw new ArgumentException("Unexpected KeyName " + keyName);
+        }
+
+        public static string Name(this EffectsAnimations effect) {
+            switch (effect) {
+                case EffectsAnimations.BloodDash: return "blood_dash";
+            }
+
+            throw new ArgumentException("Unknown effect animation: " + effect);
         }
     }
 }

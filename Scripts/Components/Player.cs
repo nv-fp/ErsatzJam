@@ -12,6 +12,9 @@ public partial class Player : CharacterBody2D {
     public float RunSpeed = 200;
 
     [Export]
+    public float DashSpeed = 600;
+
+    [Export]
     public bool DrawDebugOverlays { get; set; } = true;
 
     public float facing { get; private set; } = 0f;
@@ -22,6 +25,7 @@ public partial class Player : CharacterBody2D {
     private AnimatedSprite2D sprite;
     private Area2D interactableCheck;
     private CollisionShape2D interactableSensorShape;
+    private AnimatedSprite2D effectsSprite;
 
     // debug related shit
     static Color sensorDebugColor = new Color(0f, 1f, .1f, .5f);
@@ -31,15 +35,27 @@ public partial class Player : CharacterBody2D {
         sprite = GetNode<AnimatedSprite2D>("Sprite");
         interactableCheck = GetNode<Area2D>("InteractionCheck");
         interactableSensorShape = interactableCheck.GetNode<CollisionShape2D>("Sensor");
+        effectsSprite = GetNode<AnimatedSprite2D>("Effects Overlay Sprite");
     }
 
     private float getSpeed() {
-        return moveMode == MoveMode.Walk ? WalkSpeed : RunSpeed;
+        switch (moveMode) {
+            case MoveMode.Walk: return WalkSpeed;
+            case MoveMode.Run: return RunSpeed;
+            case MoveMode.Dash: return DashSpeed;
+        }
+        GD.Print("defaulting to walk speed - moveMode: " + moveMode);
+        return WalkSpeed;
     }
 
+    private bool hasFixedDashSpeed = false;
     public override void _PhysicsProcess(double delta) {
-        Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
-        Velocity = direction * getSpeed();
+        if (moveMode != MoveMode.Dash) {
+            Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
+            Velocity = direction * getSpeed();
+        } else {
+            Velocity = dashVelocity;
+        }
 
         MoveAndSlide();
         if (DrawDebugOverlays) {
@@ -103,14 +119,63 @@ public partial class Player : CharacterBody2D {
         var sensorXy = interactableCheck.Position + interactableSensorShape.Position;
         sensorXy -= shapeSize / 2;
         var drawnRect = new Rect2(sensorXy, shapeSize);
-        DrawRect(drawnRect, sensorDebugColor, true, 2);
+        DrawRect(drawnRect, sensorDebugColor, true);
         #endregion
     }
 
-    public override void _Process(double delta) {
+    static Color colorTransparent = new Color(1, 1, 1, 0);
+
+    private Vector2 dashVelocity;
+    private void StartDash() {
+        Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
+        dashVelocity = direction * DashSpeed;
+
+        effectsSprite.TopLevel = true;
+        effectsSprite.Position = GlobalPosition;
+        effectsSprite.Play(EffectsAnimations.BloodDash.Name());
+        effectsSprite.Visible = true;
+        effectsSprite.Scale = new Vector2(2, 2);
+        var dashTween = GetTree().CreateTween();
+        dashTween.TweenProperty(sprite, "modulate", colorTransparent, .15);
+        dashTween.TweenCallback(Callable.From(() => moveMode = MoveMode.Dash));
+    }
+
+    private void StopDash() {
+        var dashTween = GetTree().CreateTween();
+        dashTween.TweenProperty(sprite, "modulate", Colors.White, .15);
+        dashTween.TweenCallback(Callable.From(() => effectsSprite.Visible = false));
+        moveMode = MoveMode.Walk;
+        effectsSprite.TopLevel = false;
+        effectsSprite.Position = Vector2.Zero;
+        hasFixedDashSpeed = false;
+        effectsSprite.Scale = Vector2.One;
+    }
+
+    private void HandleInput() {
+        if (moveMode == MoveMode.Dash) {
+            if (effectsSprite.IsPlaying()) {
+                return;
+            } else {
+                // TODO: this is a bad place to have this logic (in handle input??)
+                StopDash();
+            }
+        }
+
+        if (Input.IsActionJustPressed(KeyName.PadA.Name())) {
+            StartDash();
+        }
+
         moveMode = Input.IsActionPressed(KeyName.PadX.Name())
             ? MoveMode.Run
             : MoveMode.Walk;
+
+    }
+
+    public override void _Process(double delta) {
+        HandleInput();
+        if (moveMode == MoveMode.Dash) {
+            return;
+        }
         maybeUpdateSensorPosition();
         var facing = Velocity.AngleTo(Vector2.Up);
 
