@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://cwp5ewlbwt8v7"]
+
+[ext_resource type="Script" path="res://Scripts/Components/NPC.cs" id="1_evqmi"]
+[ext_resource type="SpriteFrames" uid="uid://b83vjywjghaap" path="res://Art/StubHumanAnimations.tres" id="2_q0esy"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_fj5df"]
+radius = 4.0
+height = 13.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kaj13"]
+radius = 6.0
+height = 24.0
+
+[node name="Npc" type="CharacterBody2D"]
+scale = Vector2(2, 2)
+script = ExtResource("1_evqmi")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = ExtResource("2_q0esy")
+animation = &"idle_down"
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+position = Vector2(0, 5)
+shape = SubResource("CapsuleShape2D_fj5df")
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 12
+
+[node name="InteractionHitbox" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -1)
+shape = SubResource("CapsuleShape2D_kaj13")

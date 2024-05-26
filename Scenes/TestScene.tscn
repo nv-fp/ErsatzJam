@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpy53cvm4tvc6"]
+[gd_scene load_steps=7 format=3 uid="uid://bpy53cvm4tvc6"]
 
 [ext_resource type="Texture2D" uid="uid://b51y765gdpj1d" path="res://Art/magecity.png" id="1_6d51d"]
 [ext_resource type="PackedScene" uid="uid://0ibdsjupwq2u" path="res://Scenes/Components/Player.tscn" id="2_x1143"]
+[ext_resource type="PackedScene" uid="uid://ckolk6o0m4rvg" path="res://Scenes/Components/Item.tscn" id="3_2ybx2"]
+[ext_resource type="PackedScene" uid="uid://cwp5ewlbwt8v7" path="res://Scenes/Components/NPC.tscn" id="4_gfimb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_flast"]
 resource_name = "Mage city"
@@ -1148,6 +1150,7 @@ texture = ExtResource("1_6d51d")
 sources/0 = SubResource("TileSetAtlasSource_flast")
 
 [node name="TestScene" type="Node2D"]
+y_sort_enabled = true
 
 [node name="TileMap" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_hnngu")
@@ -1157,3 +1160,13 @@ layer_0/tile_data = PackedInt32Array(524289, 262144, 66, 589825, 262144, 67, 655
 [node name="Player" parent="." instance=ExtResource("2_x1143")]
 position = Vector2(115, 129)
 DashSpeed = 450.0
+
+[node name="Item2" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(76, 174)
+
+[node name="Npc" parent="." instance=ExtResource("4_gfimb")]
+position = Vector2(225, 184)
+
+[node name="Item" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(221, 81)
+Type = 1

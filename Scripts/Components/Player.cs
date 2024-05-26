@@ -171,14 +171,21 @@ public partial class Player : CharacterBody2D {
 
     // returns if we should skip the rest of processing
     private bool HandleInput() {
-        if (Input.IsActionJustPressed(KeyName.PadA.Name())) {
+        if (Input.IsActionJustPressed(JamEnums.Key.PadY.Name())) {
             StartDash();
             return true;
         }
 
-        moveMode = Input.IsActionPressed(KeyName.PadX.Name())
+        moveMode = Input.IsActionPressed(JamEnums.Key.PadX.Name())
             ? MoveMode.Run
             : MoveMode.Walk;
+
+        if (Input.IsActionJustPressed(JamEnums.Key.PadA.Name())) {
+            if (focusObject != null) {
+                focusObject.Interact(this);
+            }
+        }
+
         return false;
     }
 
@@ -203,19 +210,26 @@ public partial class Player : CharacterBody2D {
         }
 
         if (Velocity == Vector2.Zero) {
-            sprite.Play("idle_" + Util.DirectionToString(direction));
+            sprite.Play("idle_" + direction.Name());
         } else {
-            sprite.Play(moveMode.Name() + "_" + Util.DirectionToString(direction));
+            sprite.Play(moveMode.Name() + "_" + direction.Name());
+        }
+    }
+
+    private IInteractable<Player> focusObject;
+
+    private void InteractableEnter(Area2D area) {
+        GD.Print($"found interactable object: " + area.GetParent().Name);
+
+        var interactable = IInteractable<Player>.FromArea2D<Player>(area);
+        if (interactable.InteractsWith(ActorType.Player)) {
+            focusObject = interactable;
         }
     }
 
 
-    private void InteractableEnter(Area2D area) {
-        GD.Print($"found interactable object: " + area.GetParent());
-    }
-
-
     private void InteractableExit(Area2D area) {
-        GD.Print($"lost interactable object: " + area.GetParent());
+        GD.Print($"lost interactable object: " + area.GetParent().Name);
+        focusObject = null;
     }
 }

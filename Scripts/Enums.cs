@@ -3,6 +3,7 @@ using JamEnums;
 using Godot;
 
 using System;
+using System.Data;
 
 namespace JamEnums {
     public enum Direction {
@@ -18,7 +19,7 @@ namespace JamEnums {
         Dash,
     };
 
-    public enum KeyName {
+    public enum Key {
         PadA,
         PadB,
         PadX,
@@ -30,35 +31,13 @@ namespace JamEnums {
         BloodDash,
     }
 
-    public class Util {
-        public static string DirectionToString(Direction d) {
-            switch (d) {
-                case Direction.Up: return "up";
-                case Direction.Down: return "down";
-                case Direction.Right: return "right";
-                case Direction.Left: return "left";
-            }
-            throw new ArgumentException("Unexpected direction: " + d);
-        }
+    public enum ActorType {
+        Player,
+    };
 
-        public static Direction DirectionFromString(string s) {
-            switch (s.ToLower().Trim()) {
-                case "up": return Direction.Up;
-                case "down": return Direction.Down;
-                case "right": return Direction.Right;
-                case "left": return Direction.Left;
-            }
-            throw new ArgumentException("Unexpected direction string: " + s);
-        }
-
-        public static MoveMode MoveModeFromString(string s) {
-            switch (s.ToLower().Trim()) {
-                case "run": return MoveMode.Run;
-                case "walk": return MoveMode.Walk;
-                case "dash": return MoveMode.Dash;
-            }
-            throw new ArgumentException("Unexpected move mode string: " + s);
-        }
+    public enum Item {
+        RedScroll,
+        BlueScroll,
     }
 
     static class EnumExtensions {
@@ -72,13 +51,23 @@ namespace JamEnums {
             throw new ArgumentException("Unexpected move mode: " + mode);
         }
 
-        public static string Name(this KeyName keyName) {
+        public static string Name(this Direction d) {
+            switch (d) {
+                case Direction.Up: return "up";
+                case Direction.Down: return "down";
+                case Direction.Right: return "right";
+                case Direction.Left: return "left";
+            }
+            throw new ArgumentException("Unexpected direction: " + d);
+        }
+
+        public static string Name(this Key keyName) {
             switch (keyName) {
-                case KeyName.PadA: return "pad_a";
-                case KeyName.PadB: return "pad_b";
-                case KeyName.PadX: return "pad_x";
-                case KeyName.PadY: return "pad_y";
-                case KeyName.Menu: return "menu";
+                case Key.PadA: return "pad_a";
+                case Key.PadB: return "pad_b";
+                case Key.PadX: return "pad_x";
+                case Key.PadY: return "pad_y";
+                case Key.Menu: return "menu";
             }
 
             throw new ArgumentException("Unexpected KeyName " + keyName);
@@ -90,6 +79,15 @@ namespace JamEnums {
             }
 
             throw new ArgumentException("Unknown effect animation: " + effect);
+        }
+    
+        public static string Name(this Item i) {
+            switch (i) {
+                case Item.RedScroll: return "red_scroll";
+                case Item.BlueScroll: return "blue_scroll";
+            }
+
+            throw new ArgumentException("Invalid item: " + i);
         }
     }
 }
