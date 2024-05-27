@@ -5,7 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://dpqw5g5yksnpa" path="res://Art/3_100x100px.png" id="3_1rv4o"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mx60k"]
-height = 22.0
+radius = 9.0
+height = 18.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w67qr"]
 size = Vector2(10, 11)
@@ -236,7 +237,7 @@ sprite_frames = ExtResource("2_f57pj")
 animation = &"idle_down"
 
 [node name="Collider" type="CollisionShape2D" parent="."]
-position = Vector2(0, 10)
+position = Vector2(0, 14)
 shape = SubResource("CapsuleShape2D_mx60k")
 
 [node name="InteractionCheck" type="Area2D" parent="."]

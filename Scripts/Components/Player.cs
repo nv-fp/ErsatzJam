@@ -171,6 +171,10 @@ public partial class Player : CharacterBody2D {
 
     // returns if we should skip the rest of processing
     private bool HandleInput() {
+        if (HUD.Instance.GetDialogueManager().WaitingForInput()) {
+            return true;
+        }
+
         if (Input.IsActionJustPressed(JamEnums.Key.PadY.Name())) {
             StartDash();
             return true;

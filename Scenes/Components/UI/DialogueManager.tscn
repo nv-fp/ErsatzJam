@@ -1,0 +1,37 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3r88yvohqjhf"]
+
+[ext_resource type="Script" path="res://Scripts/Components/UI/DialogueManager.cs" id="1_c338p"]
+[ext_resource type="PackedScene" uid="uid://bvv8ohrsg13y0" path="res://Scenes/Components/UI/Dialogue.tscn" id="2_crqiu"]
+
+[node name="DialogueManager" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_c338p")
+
+[node name="Dialogue" parent="." instance=ExtResource("2_crqiu")]
+layout_mode = 1
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+scale = Vector2(1, 1.051)
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -103.0
+offset_top = -19.0
+offset_right = -20.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+text = "Continue"
+
+[connection signal="pressed" from="ContinueButton" to="." method="ContinuePressed"]

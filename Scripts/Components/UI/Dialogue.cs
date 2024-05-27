@@ -4,6 +4,7 @@ using System;
 
 public partial class Dialogue : Control {
     private RichTextLabel dlgLabel;
+    private Label dlgSpeaker;
     private TextureRect profileRect;
 
     [Export]
@@ -11,8 +12,9 @@ public partial class Dialogue : Control {
 
     // Called when the node enters the scene tree for the first time.
     public override void _Ready() {
+        profileRect = GetNode<TextureRect>("NinePatchRect/HBox/Profile");
+        dlgSpeaker = GetNode<Label>("NinePatchRect/HBox/VBox/Label");
         dlgLabel = GetNode<RichTextLabel>("NinePatchRect/HBox/VBox/Text");
-        profileRect = GetNode<TextureRect>("NinePathRect/HBox/Profile");
 
         if (SpeakerProfileTex == null ) {
             profileRect.Visible = false;
@@ -22,11 +24,20 @@ public partial class Dialogue : Control {
     }
 
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) {
-    }
-
     public void SetText(string txt) {
         dlgLabel.Text = txt;
+    }
+
+    public void SetProfile(Texture2D tex) {
+        profileRect.Visible = tex != null;
+        profileRect.Texture = tex;
+    }
+
+    public void SetSpeaker(string name) {
+        dlgSpeaker.Text = name;
+        dlgSpeaker.Visible = true;
+    }
+    public void NoSpeaker() {
+        dlgSpeaker.Visible = false;
     }
 }

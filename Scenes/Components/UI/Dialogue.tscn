@@ -10,11 +10,11 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = 1.0
-offset_right = -702.0
-offset_bottom = -497.0
+offset_right = -1058.0
+offset_bottom = -633.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(0.707202, 0.743476)
+scale = Vector2(0.952, 1)
 script = ExtResource("1_6f7d0")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
@@ -23,8 +23,6 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 1.34503
-offset_bottom = 1.34503
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_stb28")
