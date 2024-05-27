@@ -1,0 +1,67 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvv8ohrsg13y0"]
+
+[ext_resource type="Script" path="res://Scripts/Components/UI/Dialogue.cs" id="1_6f7d0"]
+[ext_resource type="Texture2D" uid="uid://ctut8rdnuj4g2" path="res://Art/UI/panel-transparent-border-000.png" id="1_stb28"]
+[ext_resource type="Texture2D" uid="uid://rrbhm45r32ml" path="res://Art/dude-portrait.png" id="2_n5c3n"]
+
+[node name="Dialogue" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_right = -1058.0
+offset_bottom = -633.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.952, 1)
+script = ExtResource("1_6f7d0")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_stb28")
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+
+[node name="HBox" type="HBoxContainer" parent="NinePatchRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Profile" type="TextureRect" parent="NinePatchRect/HBox"]
+layout_mode = 2
+texture = ExtResource("2_n5c3n")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="NinePatchRect/HBox/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Character Name"
+horizontal_alignment = 1
+
+[node name="Text" type="RichTextLabel" parent="NinePatchRect/HBox/VBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+text = "Dialogue"
