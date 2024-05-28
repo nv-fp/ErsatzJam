@@ -13,7 +13,8 @@ public partial class StatBar : Control {
         progressBar.TintProgress = Tint;
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) {
+    public void SetValue(int v, int max) {
+        int pct = 100 * v / max;
+        progressBar.Value = pct;
     }
 }

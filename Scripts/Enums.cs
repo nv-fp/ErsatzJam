@@ -24,6 +24,7 @@ namespace JamEnums {
         PadB,
         PadX,
         PadY,
+        PadLT,
         Menu,
     };
 
@@ -64,10 +65,11 @@ namespace JamEnums {
 
         public static string Name(this Key keyName) {
             switch (keyName) {
-                case Key.PadA: return "pad_a";
-                case Key.PadB: return "pad_b";
-                case Key.PadX: return "pad_x";
-                case Key.PadY: return "pad_y";
+                case Key.PadA: return "action";
+                case Key.PadX: return "run";
+                case Key.PadY: return "dodge";
+                case Key.PadB: return "attack";
+                case Key.PadLT: return "power";
                 case Key.Menu: return "menu";
             }
 

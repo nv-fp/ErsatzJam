@@ -9,15 +9,46 @@ public partial class Player : CharacterBody2D {
     [Export] public float WalkSpeed = 120f;
     [Export] public float RunSpeed = 200;
     [Export] public float DashSpeed = 600;
+    [Export] public uint MaxHealth = 100;
+    [Export] public uint MaxHunger = 100;
+    [Export] public uint MaxJuice = 50;
+
+    [Export] public uint DashPoints = 2;
+    [Export] public uint StrengthPoints = 5;
+    [Export] public uint PersuasionPoints = 20;
+    [Export] public uint HealPoints = 4;
 
     [Export] public bool DrawDebugOverlays { get; set; } = true;
     #endregion
 
     #region player stats
     // stats
-    public uint Health { get; private set; }
-    public uint Hunger { get; private set; }
-    public uint Juice {  get; private set; }
+    private uint _health;
+    public uint Health {
+        get => _health;
+        private set {
+            _health = value;
+            HUD.Instance?.HealtBar()?.SetValue((int)value, (int)MaxHealth);
+        }
+    }
+
+    private uint _hunger;
+    public uint Hunger {
+        get => _hunger;
+        private set {
+            _hunger = value;
+            HUD.Instance?.HungerBar()?.SetValue((int)value, (int)MaxHunger);
+        }
+    }
+
+    private uint _juice;
+    public uint Juice {
+        get => _juice;
+        private set {
+            _juice = value;
+            HUD.Instance?.JuiceBar()?.SetValue((int)value, (int)MaxJuice);
+        }
+    }
     public uint Vampirism { get; private set; }
     #endregion
 
@@ -80,6 +111,12 @@ public partial class Player : CharacterBody2D {
         interactableCollider = interactableCheck.GetNode<CollisionShape2D>("Sensor");
         physicsCollider = GetNode<CollisionShape2D>("Collider");
         hitboxCollider = GetNode<CollisionShape2D>("Hitbox/Collider");
+
+        GD.Print("Player._Ready setting initial stats");
+        Health = MaxHealth;
+        Hunger = MaxHunger;
+        Juice = MaxJuice;
+        GD.Print($"Initial Stats: {Health}, {Hunger}, {Juice}");
     }
 
     private float getSpeed() {
@@ -165,7 +202,21 @@ public partial class Player : CharacterBody2D {
         DrawRect(drawnRect, color, true);
     }
 
+    // return true if power was able to deduct enough points
+    public bool UsePower(uint points) {
+        if (Juice < points) {
+            return false;
+        }
+        Juice = Juice - points;
+        HUD.Instance.JuiceBar().SetValue((int)Juice, (int)MaxJuice);
+        return true;
+    }
+
     private void StartDash() {
+        if (!UsePower(DashPoints)) {
+            return;
+        }
+
         // capture current direction and save for duration of dash
         Vector2 impulse = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
         if (impulse == Vector2.Zero) {
@@ -251,7 +302,12 @@ public partial class Player : CharacterBody2D {
         }
 
         if (!EffectPlaying() && Input.IsActionJustPressed(JamEnums.Key.PadB.Name())) {
-            StartAttack();
+            if (Input.IsActionPressed(JamEnums.Key.PadLT.Name()) && UsePower(StrengthPoints)) {
+                GD.Print("TODO: power attack");
+                StartAttack();
+            } else {
+                StartAttack();
+            }
             return true;
         }
 
