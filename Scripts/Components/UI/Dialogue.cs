@@ -28,6 +28,10 @@ public partial class Dialogue : Control {
         dlgLabel.Text = txt;
     }
 
+    public void SetProfile(string resPath) {
+        SetProfile(ResourceLoader.Load<Texture2D>(resPath));
+    }
+
     public void SetProfile(Texture2D tex) {
         profileRect.Visible = tex != null;
         profileRect.Texture = tex;

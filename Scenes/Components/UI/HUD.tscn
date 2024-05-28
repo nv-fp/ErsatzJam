@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://ctrd7f5vsvspa"]
+[gd_scene load_steps=4 format=3 uid="uid://ctrd7f5vsvspa"]
 
 [ext_resource type="Script" path="res://Scripts/Components/UI/HUD.cs" id="1_8cpoi"]
 [ext_resource type="PackedScene" uid="uid://b3r88yvohqjhf" path="res://Scenes/Components/UI/DialogueManager.tscn" id="2_e0pfq"]
+[ext_resource type="PackedScene" uid="uid://bpjhtroye3rx2" path="res://Scenes/Components/UI/StatBar.tscn" id="3_ysdtv"]
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_8cpoi")
@@ -12,3 +13,36 @@ offset_left = 240.0
 offset_top = 460.0
 offset_right = -240.0
 offset_bottom = -60.0
+
+[node name="Hunger" parent="." instance=ExtResource("3_ysdtv")]
+anchors_preset = -1
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 99.0
+offset_top = 82.0
+offset_right = 99.0
+offset_bottom = 82.0
+scale = Vector2(1.5, 1.5)
+Tint = Color(0.785156, 0, 0, 1)
+
+[node name="Health" parent="." instance=ExtResource("3_ysdtv")]
+anchors_preset = -1
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 99.0
+offset_top = 46.0
+offset_right = 99.0
+offset_bottom = 46.0
+scale = Vector2(1.5, 1.5)
+Tint = Color(0.199219, 0.512024, 1, 1)
+
+[node name="Juice" parent="." instance=ExtResource("3_ysdtv")]
+anchors_preset = -1
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 99.0
+offset_top = 118.0
+offset_right = 99.0
+offset_bottom = 118.0
+scale = Vector2(1.5, 1.5)
+Tint = Color(0.917969, 0.903625, 0, 1)

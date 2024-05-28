@@ -5,37 +5,81 @@ using Godot;
 using System;
 
 public partial class Player : CharacterBody2D {
-    [Export]
-    public float WalkSpeed = 120f;
+    #region player configs
+    [Export] public float WalkSpeed = 120f;
+    [Export] public float RunSpeed = 200;
+    [Export] public float DashSpeed = 600;
 
-    [Export]
-    public float RunSpeed = 200;
+    [Export] public bool DrawDebugOverlays { get; set; } = true;
+    #endregion
 
-    [Export]
-    public float DashSpeed = 600;
+    #region player stats
+    // stats
+    public uint Health { get; private set; }
+    public uint Hunger { get; private set; }
+    public uint Juice {  get; private set; }
+    public uint Vampirism { get; private set; }
+    #endregion
 
-    [Export]
-    public bool DrawDebugOverlays { get; set; } = true;
-
+    #region player state tracking -- "is walking", "is attacking" etc
+    // angle, in radians from "up"
     public float facing { get; private set; } = 0f;
-    private Direction direction = Direction.Up;
-    private MoveMode moveMode = MoveMode.Walk;
+    private bool isAttacking = false;
 
+    private IInteractable<Player> focusObject;
+    private bool focusAttackable = false;
+
+    private Direction direction = Direction.Up;
+    // how are we moving
+    private MoveMode moveMode = MoveMode.Walk;
+    // used to save dashVelocity at the time of pressing dash
+    private Vector2 dashVelocity;
+
+    private bool EffectPlaying() {
+        return effectsSprite.IsPlaying();
+    }
+    #endregion
+
+    #region node references
     // references to player nodes
     private AnimatedSprite2D sprite;
     private Area2D interactableCheck;
-    private CollisionShape2D interactableSensorShape;
     private AnimatedSprite2D effectsSprite;
+    private CollisionShape2D interactableCollider;
+    private CollisionShape2D physicsCollider;
+    private CollisionShape2D hitboxCollider;
+    #endregion
 
+    #region consts and shit
+    static Vector2 vectorTwo = new Vector2(2, 2);
+    static Vector2[] sensorPosition = new Vector2[4] {
+        new Vector2(0, -45), // up
+        new Vector2(30,  5), // right
+        new Vector2(0,  40), // down
+        new Vector2(-30, 5), // left
+    };
+    static Vector2 sensorScaledUp = new Vector2(1, 3);
+    static Vector2 sensorNormal = new Vector2(1, 1);
+
+    #endregion
+
+    #region debug stuff
     // debug related shit
-    static Color sensorDebugColor = new Color(0f, 1f, .1f, .5f);
+    static Color colorTransparent = new Color(1, 1, 1, 0);
+    [Export] public Color defaultSensorColor = new Color(0f, 1f, .1f, .5f);
+    [Export] public Color physicsSensorColor = new Color(0f, .1f, 1f, .5f);
+    [Export] public Color hitboxSensorColor = new Color(1f, 0, 0, .5f);
+    #endregion
 
     public override void _Ready() {
         base._Ready();
         sprite = GetNode<AnimatedSprite2D>("Sprite");
+        effectsSprite = GetNode<AnimatedSprite2D>("EffectsSprite");
+
         interactableCheck = GetNode<Area2D>("InteractionCheck");
-        interactableSensorShape = interactableCheck.GetNode<CollisionShape2D>("Sensor");
-        effectsSprite = GetNode<AnimatedSprite2D>("Effects Overlay Sprite");
+        interactableCollider = interactableCheck.GetNode<CollisionShape2D>("Sensor");
+        physicsCollider = GetNode<CollisionShape2D>("Collider");
+        hitboxCollider = GetNode<CollisionShape2D>("Hitbox/Collider");
     }
 
     private float getSpeed() {
@@ -49,6 +93,9 @@ public partial class Player : CharacterBody2D {
     }
 
     public override void _PhysicsProcess(double delta) {
+        if (HUD.Instance.GetDialogueManager().WaitingForInput()) {
+            return;
+        }
         if (moveMode != MoveMode.Dash) {
             Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
             Velocity = direction * getSpeed();
@@ -77,31 +124,23 @@ public partial class Player : CharacterBody2D {
         return Direction.Up;
     }
 
-    static Vector2[] sensorPosition = new Vector2[4] {
-        new Vector2(0, -45), // up
-        new Vector2(30,  5), // right
-        new Vector2(0,  40), // down
-        new Vector2(-30, 5), // left
-    };
-    static Vector2 sensorScaledUp = new Vector2(1, 3);
-    static Vector2 sensorNormal = new Vector2(1, 1);
     private void maybeUpdateSensorPosition() {
         switch (direction) {
             case Direction.Up:
-                interactableSensorShape.Position = sensorPosition[0];
-                interactableSensorShape.Scale = sensorNormal;
+                interactableCollider.Position = sensorPosition[0];
+                interactableCollider.Scale = sensorNormal;
                 break;
             case Direction.Right:
-                interactableSensorShape.Position = sensorPosition[1];
-                interactableSensorShape.Scale = sensorScaledUp;
+                interactableCollider.Position = sensorPosition[1];
+                interactableCollider.Scale = sensorScaledUp;
                 break;
             case Direction.Down:
-                interactableSensorShape.Position = sensorPosition[2];
-                interactableSensorShape.Scale = sensorNormal;
+                interactableCollider.Position = sensorPosition[2];
+                interactableCollider.Scale = sensorNormal;
                 break;
             case Direction.Left:
-                interactableSensorShape.Position = sensorPosition[3];
-                interactableSensorShape.Scale = sensorScaledUp;
+                interactableCollider.Position = sensorPosition[3];
+                interactableCollider.Scale = sensorScaledUp;
                 break;
         }
     }
@@ -112,20 +151,20 @@ public partial class Player : CharacterBody2D {
             return;
         }
 
-        #region draw interactable sensor rect
-        var shapeRect = interactableSensorShape.Shape.GetRect();
-        var shapeSize = shapeRect.Size * interactableSensorShape.Scale;
-        var sensorXy = interactableCheck.Position + interactableSensorShape.Position;
-        sensorXy -= shapeSize / 2;
-        var drawnRect = new Rect2(sensorXy, shapeSize);
-        DrawRect(drawnRect, sensorDebugColor, true);
-        #endregion
+        DrawCollisionShape(interactableCollider, defaultSensorColor);
+        DrawCollisionShape(hitboxCollider, hitboxSensorColor);
+        DrawCollisionShape(physicsCollider, physicsSensorColor);
     }
 
-    static Color colorTransparent = new Color(1, 1, 1, 0);
+    private void DrawCollisionShape(CollisionShape2D shape, Color color) {
+        var shapeRect = shape.Shape.GetRect();
+        var shapeSize = shapeRect.Size * shape.Scale;
+        var sensorXy = shape.Position;
+        sensorXy -= shapeSize / 2;
+        var drawnRect = new Rect2(sensorXy, shapeSize);
+        DrawRect(drawnRect, color, true);
+    }
 
-    // used to save dashVelocity at the time of pressing dash
-    private Vector2 dashVelocity;
     private void StartDash() {
         // capture current direction and save for duration of dash
         Vector2 impulse = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down").Normalized();
@@ -145,7 +184,7 @@ public partial class Player : CharacterBody2D {
 
         // set up the effects sprite te play
         effectsSprite.Play(EffectsAnimations.BloodDash.Name());
-        effectsSprite.Scale = new Vector2(2, 2);
+        effectsSprite.Scale = vectorTwo;
         effectsSprite.Visible = true;
 
         // start the tween that kicks off the dash
@@ -156,7 +195,7 @@ public partial class Player : CharacterBody2D {
 
     private void StopDash() {
         var undashTween = GetTree().CreateTween();
-        undashTween.TweenProperty(sprite, "modulate", Colors.White, .15);
+        undashTween.TweenProperty(sprite, "modulate", Colors.White, .05);
         undashTween.TweenCallback(Callable.From(() => {
             // unwind effects sprite changes
             effectsSprite.Visible = false;
@@ -169,13 +208,34 @@ public partial class Player : CharacterBody2D {
         }));
     }
 
+    private void StartAttack() {
+        isAttacking = true;
+        effectsSprite.Scale = vectorTwo;
+        effectsSprite.Visible = true;
+        effectsSprite.Position = interactableCollider.Position;
+        effectsSprite.FlipH = direction == Direction.Left;
+        if (direction == Direction.Up) {
+            effectsSprite.RotationDegrees = -90;
+        }
+        if (direction == Direction.Down) {
+            effectsSprite.RotationDegrees = 90;
+        }
+        effectsSprite.Play(EffectsAnimations.Attack.Name());
+    }
+
+    private void StopAttack() {
+        isAttacking = false;
+        effectsSprite.Scale = Vector2.One;
+        effectsSprite.Visible = false;
+    }
+
     // returns if we should skip the rest of processing
     private bool HandleInput() {
         if (HUD.Instance.GetDialogueManager().WaitingForInput()) {
             return true;
         }
 
-        if (Input.IsActionJustPressed(JamEnums.Key.PadY.Name())) {
+        if (!EffectPlaying() && moveMode != MoveMode.Dash && Input.IsActionJustPressed(JamEnums.Key.PadY.Name())) {
             StartDash();
             return true;
         }
@@ -190,13 +250,22 @@ public partial class Player : CharacterBody2D {
             }
         }
 
+        if (!EffectPlaying() && Input.IsActionJustPressed(JamEnums.Key.PadB.Name())) {
+            StartAttack();
+            return true;
+        }
+
         return false;
     }
 
     public override void _Process(double delta) {
-        // check if we're dashing and bail or stop if relevant
+        if (isAttacking && !EffectPlaying()) {
+            StopAttack();
+        }
+
+        // check if we're dashing and bail or stop if completed
         if (moveMode == MoveMode.Dash) {
-            if (effectsSprite.IsPlaying()) {
+            if (EffectPlaying()) {
                 return;
             } else {
                 StopDash();
@@ -220,14 +289,14 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-    private IInteractable<Player> focusObject;
-
+    #region signal callbacks
     private void InteractableEnter(Area2D area) {
         GD.Print($"found interactable object: " + area.GetParent().Name);
 
         var interactable = IInteractable<Player>.FromArea2D<Player>(area);
         if (interactable.InteractsWith(ActorType.Player)) {
             focusObject = interactable;
+            focusAttackable = area.GetCollisionLayerValue(3);
         }
     }
 
@@ -236,4 +305,13 @@ public partial class Player : CharacterBody2D {
         GD.Print($"lost interactable object: " + area.GetParent().Name);
         focusObject = null;
     }
+
+    private void DoHitResolution() {
+        if (focusObject != null && focusAttackable) {
+            GD.Print($"Hit {((Node2D)focusObject).Name}");
+        } else {
+            GD.Print("miss!");
+        }
+    }
+    #endregion
 }

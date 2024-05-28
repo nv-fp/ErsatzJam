@@ -1,7 +1,5 @@
 using Godot;
 
-using System;
-
 public partial class TestScene : Node {
     private Node2D playerNode;
     private Camera2D camera;

@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bpjhtroye3rx2"]
+
+[ext_resource type="Script" path="res://Scripts/Components/UI/StatBar.cs" id="1_7ogo8"]
+[ext_resource type="Texture2D" uid="uid://dm0lpu6cgigxg" path="res://Art/UI/bar-mask.png" id="1_d4hyu"]
+[ext_resource type="Texture2D" uid="uid://bipu1jyosjat0" path="res://Art/UI/bar-outline.png" id="2_3fkbp"]
+
+[node name="StatBar" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7ogo8")
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 50.0
+texture_under = ExtResource("1_d4hyu")
+texture_over = ExtResource("2_3fkbp")
+texture_progress = ExtResource("1_d4hyu")
+tint_under = Color(0.796243, 0.796243, 0.796243, 0.4)
+tint_progress = Color(0.359375, 1, 0, 1)

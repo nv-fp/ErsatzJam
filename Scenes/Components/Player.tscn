@@ -1,8 +1,10 @@
-[gd_scene load_steps=37 format=3 uid="uid://0ibdsjupwq2u"]
+[gd_scene load_steps=45 format=3 uid="uid://0ibdsjupwq2u"]
 
 [ext_resource type="Script" path="res://Scripts/Components/Player.cs" id="1_wnxft"]
 [ext_resource type="SpriteFrames" uid="uid://b83vjywjghaap" path="res://Art/StubHumanAnimations.tres" id="2_f57pj"]
 [ext_resource type="Texture2D" uid="uid://dpqw5g5yksnpa" path="res://Art/3_100x100px.png" id="3_1rv4o"]
+[ext_resource type="Texture2D" uid="uid://vo3hvhijwdda" path="res://Art/attack.png" id="3_vm0mp"]
+[ext_resource type="Script" path="res://Scripts/Components/EffectsSprite.cs" id="5_78426"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mx60k"]
 radius = 9.0
@@ -10,6 +12,30 @@ height = 18.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w67qr"]
 size = Vector2(10, 11)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ok3y"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ros8"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wmtqe"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3sbar"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_se5f2"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vy51d"]
+atlas = ExtResource("3_vm0mp")
+region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bbggt"]
 atlas = ExtResource("3_1rv4o")
@@ -130,6 +156,29 @@ region = Rect2(400, 400, 100, 100)
 [sub_resource type="SpriteFrames" id="SpriteFrames_o53wq"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ok3y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ros8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wmtqe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3sbar")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_se5f2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vy51d")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 10.0
+}, {
+"frames": [{
 "duration": 6.0,
 "texture": SubResource("AtlasTexture_bbggt")
 }, {
@@ -226,9 +275,9 @@ animations = [{
 height = 48.0
 
 [node name="Player" type="CharacterBody2D"]
+position = Vector2(0, -24)
 script = ExtResource("1_wnxft")
 RunSpeed = 260.0
-metadata/_edit_lock_ = true
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
@@ -239,29 +288,29 @@ animation = &"idle_down"
 [node name="Collider" type="CollisionShape2D" parent="."]
 position = Vector2(0, 14)
 shape = SubResource("CapsuleShape2D_mx60k")
+metadata/_edit_lock_ = true
 
 [node name="InteractionCheck" type="Area2D" parent="."]
 collision_layer = 0
-collision_mask = 8
+collision_mask = 12
 metadata/_edit_lock_ = true
 
 [node name="Sensor" type="CollisionShape2D" parent="InteractionCheck"]
 position = Vector2(0, -43)
 shape = SubResource("RectangleShape2D_w67qr")
 
-[node name="Effects Overlay Sprite" type="AnimatedSprite2D" parent="."]
-position = Vector2(0, 16)
+[node name="EffectsSprite" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_o53wq")
-animation = &"blood_dash"
-frame = 28
-frame_progress = 1.0
+animation = &"attack"
+script = ExtResource("5_78426")
 
 [node name="Hitbox" type="Area2D" parent="."]
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hitbox"]
+[node name="Collider" type="CollisionShape2D" parent="Hitbox"]
 position = Vector2(0, -3)
 shape = SubResource("CapsuleShape2D_ka74g")
 
 [connection signal="area_entered" from="InteractionCheck" to="." method="InteractableEnter"]
 [connection signal="area_exited" from="InteractionCheck" to="." method="InteractableExit"]
+[connection signal="CheckHit" from="EffectsSprite" to="." method="DoHitResolution"]

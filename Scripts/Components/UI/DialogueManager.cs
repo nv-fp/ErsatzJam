@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using System.Linq;
 
 using Godot;
@@ -9,20 +9,26 @@ public partial class DialogueManager : Control {
     private Button continueBtn;
     private Dialogue dlg;
 
+    [Signal] public delegate void DialogueStartedEventHandler();
+    [Signal] public delegate void DialogueStoppedEventHandler();
+
     private string[] currentScript;
     private int currentLine;
     private bool waitForContinue = false;
+    private Action completedCallback;
 
     public override void _Ready() {
         continueBtn = GetNode<Button>("ContinueButton");
         dlg = GetNode<Dialogue>("Dialogue");
     }
 
-    public void DisplayScript(string script, Texture2D tex = null) {
+    public void DisplayScript(string script, Texture2D tex = null, Action callback = null) {
         dlg.SetProfile(tex);
 
         currentScript = script.Split("\n").Where((string e) => e.Trim().Length > 0).ToArray();
+        completedCallback = callback;
         if (currentScript.Length > 0) {
+            EmitSignal(SignalName.DialogueStarted);
             currentLine = 0;
             Visible = true;
             dlg.Visible = true;
@@ -38,7 +44,14 @@ public partial class DialogueManager : Control {
         var parts = line.Split(':');
 
         if (parts.Length == 2) {
-            dlg.SetSpeaker(parts[0]);
+            var speaker = parts[0];
+            if (speaker.StartsWith("<")) {
+                var endPortrait = speaker.IndexOf(">");
+                var portrait = speaker.Substr(1, endPortrait - 1);
+                dlg.SetProfile($"res://Art/{portrait}.png");
+                speaker = speaker.Substring(endPortrait + 1);
+            }
+            dlg.SetSpeaker(speaker);
             dlg.SetText(parts[1]);
         } else {
             dlg.NoSpeaker();
@@ -55,6 +68,8 @@ public partial class DialogueManager : Control {
             waitForContinue = false;
             continueBtn.Visible = false;
             dlg.Visible = false;
+            completedCallback?.Invoke();
+            EmitSignal(SignalName.DialogueStopped);
         } else {
             DisplayLine();
         }

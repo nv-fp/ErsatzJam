@@ -10,11 +10,10 @@ public partial class NPC : CharacterBody2D, IInteractable<Player> {
         GD.Print($"current level is: {level}");
         if (level != null) {
             level.Hud.GetDialogueManager().DisplayScript(
-                "Frank: Hi Bob\n" +
-                "Bob: Hey Frank\n" +
-                "Frank: Busy week eh?\n" +
-                "Bob: These heretics aren't going to burn themselves now are they?\n",
-                ResourceLoader.Load<Texture2D>("res://Art/dude-portrait.png")
+                "<kolvir-portrait>Frank: Hi Bob\n" +
+                "<cleric-portrait>Bob: Hey Frank\n" +
+                "<kolvir-portrait>Frank: Busy week eh?\n" +
+                "<cleric-portrait>Bob: These heretics aren't going to burn themselves now are they?\n"
             );
         }
     }

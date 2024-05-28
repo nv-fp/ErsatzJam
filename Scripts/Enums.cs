@@ -29,6 +29,7 @@ namespace JamEnums {
 
     public enum EffectsAnimations {
         BloodDash,
+        Attack,
     }
 
     public enum ActorType {
@@ -76,6 +77,7 @@ namespace JamEnums {
         public static string Name(this EffectsAnimations effect) {
             switch (effect) {
                 case EffectsAnimations.BloodDash: return "blood_dash";
+                case EffectsAnimations.Attack: return "attack";
             }
 
             throw new ArgumentException("Unknown effect animation: " + effect);
