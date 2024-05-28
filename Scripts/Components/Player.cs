@@ -18,13 +18,16 @@ public partial class Player : CharacterBody2D {
     [Export] public uint PersuasionPoints = 20;
     [Export] public uint HealPoints = 4;
 
+    [Export] public uint HungerGainRateSec = 1;
+    [Export] public uint RegenRateMin = 10;
+
     [Export] public bool DrawDebugOverlays { get; set; } = true;
     #endregion
 
     #region player stats
     // stats
-    private uint _health;
-    public uint Health {
+    private double _health;
+    public double Health {
         get => _health;
         private set {
             _health = value;
@@ -32,8 +35,8 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-    private uint _hunger;
-    public uint Hunger {
+    private double _hunger;
+    public double Hunger {
         get => _hunger;
         private set {
             _hunger = value;
@@ -56,6 +59,7 @@ public partial class Player : CharacterBody2D {
     // angle, in radians from "up"
     public float facing { get; private set; } = 0f;
     private bool isAttacking = false;
+    private bool vampiricAttack = false;
 
     private IInteractable<Player> focusObject;
     private bool focusAttackable = false;
@@ -114,7 +118,7 @@ public partial class Player : CharacterBody2D {
 
         GD.Print("Player._Ready setting initial stats");
         Health = MaxHealth;
-        Hunger = MaxHunger;
+        Hunger = 0;
         Juice = MaxJuice;
         GD.Print($"Initial Stats: {Health}, {Hunger}, {Juice}");
     }
@@ -259,17 +263,19 @@ public partial class Player : CharacterBody2D {
         }));
     }
 
-    private void StartAttack() {
+    private void StartAttack(bool vampiricPowered = false) {
         isAttacking = true;
+        vampiricAttack = vampiricPowered;
         effectsSprite.Scale = vectorTwo;
         effectsSprite.Visible = true;
         effectsSprite.Position = interactableCollider.Position;
         effectsSprite.FlipH = direction == Direction.Left;
         if (direction == Direction.Up) {
             effectsSprite.RotationDegrees = -90;
-        }
-        if (direction == Direction.Down) {
+        } else if (direction == Direction.Down) {
             effectsSprite.RotationDegrees = 90;
+        } else {
+            effectsSprite.RotationDegrees = 0;
         }
         effectsSprite.Play(EffectsAnimations.Attack.Name());
     }
@@ -303,8 +309,7 @@ public partial class Player : CharacterBody2D {
 
         if (!EffectPlaying() && Input.IsActionJustPressed(JamEnums.Key.PadB.Name())) {
             if (Input.IsActionPressed(JamEnums.Key.PadLT.Name()) && UsePower(StrengthPoints)) {
-                GD.Print("TODO: power attack");
-                StartAttack();
+                StartAttack(true);
             } else {
                 StartAttack();
             }
@@ -314,9 +319,21 @@ public partial class Player : CharacterBody2D {
         return false;
     }
 
+    private void RegenAndHunger(double delta) {
+        if (HUD.Instance.GetDialogueManager().WaitingForInput()) {
+            return;
+        }
+        Hunger += HungerGainRateSec * delta;
+        Health += RegenRateMin * (delta / 60);
+    }
+
     public override void _Process(double delta) {
+        RegenAndHunger(delta);
         if (isAttacking && !EffectPlaying()) {
             StopAttack();
+        }
+        if (isAttacking) {
+            effectsSprite.Position = interactableCollider.Position;
         }
 
         // check if we're dashing and bail or stop if completed
@@ -356,7 +373,6 @@ public partial class Player : CharacterBody2D {
         }
     }
 
-
     private void InteractableExit(Area2D area) {
         GD.Print($"lost interactable object: " + area.GetParent().Name);
         focusObject = null;
@@ -365,6 +381,8 @@ public partial class Player : CharacterBody2D {
     private void DoHitResolution() {
         if (focusObject != null && focusAttackable) {
             GD.Print($"Hit {((Node2D)focusObject).Name}");
+            var attackable = (IAttackable)focusObject;
+            attackable.Attacked(vampiricAttack);
         } else {
             GD.Print("miss!");
         }
