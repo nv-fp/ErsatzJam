@@ -6,7 +6,6 @@ public partial class NPC : CharacterBody2D,
     IInteractable<Player>,
     IAttackable {
 
-    public TestScene level { get; set; }
     [Export] public string name { get; private set; }
 
     [Export] public int MaxHitPoints { get; set; } = 5;
@@ -20,15 +19,12 @@ public partial class NPC : CharacterBody2D,
     }
 
     public void Interact(Player withActor) {
-        GD.Print($"current level is: {level}");
-        if (level != null) {
-            level.Hud.GetDialogueManager().DisplayScript(
-                "<kolvir-portrait>Frank: Hi Bob\n" +
-                "<cleric-portrait>Bob: Hey Frank\n" +
-                "<kolvir-portrait>Frank: Busy week eh?\n" +
-                "<cleric-portrait>Bob: These heretics aren't going to burn themselves now are they?\n"
-            );
-        }
+        HUD.Instance.GetDialogueManager().DisplayScript(
+            "<kolvir-portrait>Frank: Hi Bob\n" +
+            "<cleric-portrait>Bob: Hey Frank\n" +
+            "<kolvir-portrait>Frank: Busy week eh?\n" +
+            "<cleric-portrait>Bob: These heretics aren't going to burn themselves now are they?\n"
+        );
     }
 
     public override void _Process(double delta) {
