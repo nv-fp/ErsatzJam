@@ -8,6 +8,8 @@ public partial class HUD : CanvasLayer {
     private StatBar healthBar;
     private StatBar hungerBar;
     private StatBar juiceBar;
+    private HBoxContainer toastContainer;
+    private Label toastLabel;
 
     public HUD() {
         HUD.Instance = this;
@@ -19,6 +21,8 @@ public partial class HUD : CanvasLayer {
         healthBar = GetNode<StatBar>("Health");
         hungerBar = GetNode<StatBar>("Hunger");
         juiceBar = GetNode<StatBar>("Juice");
+        toastContainer = GetNode<HBoxContainer>("Toast");
+        toastLabel = toastContainer.GetNode<Label>("Label");
     }
 
     public DialogueManager GetDialogueManager() {
@@ -48,7 +52,13 @@ public partial class HUD : CanvasLayer {
         return juiceBar;
     }
 
-    // Called every frame. 'delta' is the elapsed time since the previous frame.
-    public override void _Process(double delta) {
+    public void DisplayToast(string msg) {
+        toastLabel.Text = $" {msg} ";
+        toastContainer.Visible = true;
+    }
+
+    public void HideToast() {
+        toastLabel.Text = "";
+        toastContainer.Visible = false;
     }
 }

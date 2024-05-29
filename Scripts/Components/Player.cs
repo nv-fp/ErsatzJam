@@ -283,6 +283,11 @@ public partial class Player : CharacterBody2D {
         } else {
             effectsSprite.RotationDegrees = 0;
         }
+        if (vampiricPowered) {
+            effectsSprite.Modulate = Colors.Yellow;
+        } else {
+            effectsSprite.Modulate = Colors.White;
+        }
         effectsSprite.Play(EffectsAnimations.Attack.Name());
     }
 
@@ -290,6 +295,7 @@ public partial class Player : CharacterBody2D {
         isAttacking = false;
         effectsSprite.Scale = Vector2.One;
         effectsSprite.Visible = false;
+        effectsSprite.Modulate = Colors.White;
     }
 
     // returns if we should skip the rest of processing
@@ -370,18 +376,18 @@ public partial class Player : CharacterBody2D {
 
     #region signal callbacks
     private void InteractableEnter(Area2D area) {
-        GD.Print($"found interactable object: " + area.GetParent().Name);
-
         var interactable = IInteractable<Player>.FromArea2D<Player>(area);
         if (interactable.InteractsWith(ActorType.Player)) {
             focusObject = interactable;
             focusAttackable = area.GetCollisionLayerValue(3);
+            HUD.Instance.DisplayToast(interactable.ActionSummary());
         }
+
     }
 
     private void InteractableExit(Area2D area) {
-        GD.Print($"lost interactable object: " + area.GetParent().Name);
         focusObject = null;
+        HUD.Instance.HideToast();
     }
 
     private void DoHitResolution() {

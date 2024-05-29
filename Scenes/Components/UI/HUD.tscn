@@ -1,19 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://ctrd7f5vsvspa"]
+[gd_scene load_steps=6 format=3 uid="uid://ctrd7f5vsvspa"]
 
 [ext_resource type="Script" path="res://Scripts/Components/UI/HUD.cs" id="1_8cpoi"]
 [ext_resource type="PackedScene" uid="uid://b3r88yvohqjhf" path="res://Scenes/Components/UI/DialogueManager.tscn" id="2_e0pfq"]
 [ext_resource type="PackedScene" uid="uid://bpjhtroye3rx2" path="res://Scenes/Components/UI/StatBar.tscn" id="3_ysdtv"]
 [ext_resource type="PackedScene" uid="uid://8n2h0fdahq0d" path="res://Scenes/Components/UI/Inventory.tscn" id="4_dcys3"]
+[ext_resource type="Texture2D" uid="uid://v8xd7raru4v3" path="res://Art/UI/divider-005.png" id="5_2x68d"]
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_8cpoi")
-
-[node name="DialogueManager" parent="." instance=ExtResource("2_e0pfq")]
-visible = false
-offset_left = 240.0
-offset_top = 460.0
-offset_right = -240.0
-offset_bottom = -60.0
 
 [node name="Hunger" parent="." instance=ExtResource("3_ysdtv")]
 anchors_preset = -1
@@ -58,3 +52,42 @@ offset_right = -46.0
 offset_bottom = -46.0
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="Toast" type="HBoxContainer" parent="."]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -156.5
+offset_top = -102.0
+offset_right = 156.5
+offset_bottom = -52.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+
+[node name="TextureRect" type="TextureRect" parent="Toast"]
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("5_2x68d")
+
+[node name="Label" type="Label" parent="Toast"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = " Toast "
+
+[node name="TextureRect2" type="TextureRect" parent="Toast"]
+layout_mode = 2
+size_flags_vertical = 4
+texture = ExtResource("5_2x68d")
+flip_h = true
+
+[node name="DialogueManager" parent="." instance=ExtResource("2_e0pfq")]
+visible = false
+offset_left = 240.0
+offset_top = 460.0
+offset_right = -240.0
+offset_bottom = -60.0
