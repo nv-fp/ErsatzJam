@@ -51,6 +51,5 @@ public partial class NPC : CharacterBody2D,
         } else {
             HitPoints -= 1;
         }
-        throw new System.NotImplementedException();
     }
 }
