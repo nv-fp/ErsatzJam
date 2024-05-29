@@ -4,6 +4,7 @@ public partial class HUD : CanvasLayer {
     public static HUD Instance {  get; private set; }
     
     private DialogueManager dlgMgr;
+    private Inventory inventory;
     private StatBar healthBar;
     private StatBar hungerBar;
     private StatBar juiceBar;
@@ -14,6 +15,7 @@ public partial class HUD : CanvasLayer {
 
     public override void _Ready() {
         dlgMgr = GetNode<DialogueManager>("DialogueManager");
+        inventory = GetNode<Inventory>("Inventory");
         healthBar = GetNode<StatBar>("Health");
         hungerBar = GetNode<StatBar>("Hunger");
         juiceBar = GetNode<StatBar>("Juice");
@@ -21,6 +23,10 @@ public partial class HUD : CanvasLayer {
 
     public DialogueManager GetDialogueManager() {
         return dlgMgr;
+    }
+
+    public Inventory GetInventory() {
+        return inventory;
     }
 
     public void Setup(Player player) {

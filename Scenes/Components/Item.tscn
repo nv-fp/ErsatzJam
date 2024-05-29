@@ -1,43 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://ckolk6o0m4rvg"]
+[gd_scene load_steps=5 format=3 uid="uid://ckolk6o0m4rvg"]
 
 [ext_resource type="Texture2D" uid="uid://sky6ux805sdx" path="res://Art/ItemSheet.png" id="1_scusm"]
 [ext_resource type="Script" path="res://Scripts/Components/Item.cs" id="2_rhbvq"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wt6qu"]
-atlas = ExtResource("1_scusm")
-region = Rect2(64, 64, 16, 16)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_66u62"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_yqpbe"]
 atlas = ExtResource("1_scusm")
 region = Rect2(80, 64, 16, 16)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_1cddc"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_wt6qu")
-}],
-"loop": true,
-"name": &"blue_scroll",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_66u62")
-}],
-"loop": true,
-"name": &"red_scroll",
-"speed": 5.0
-}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3kum6"]
 size = Vector2(16, 16)
 
-[node name="Item" type="AnimatedSprite2D"]
+[node name="Item" type="Sprite2D"]
 texture_filter = 1
 scale = Vector2(2, 2)
-sprite_frames = SubResource("SpriteFrames_1cddc")
-animation = &"blue_scroll"
+texture = SubResource("AtlasTexture_yqpbe")
 script = ExtResource("2_rhbvq")
 
 [node name="Area2D" type="Area2D" parent="."]

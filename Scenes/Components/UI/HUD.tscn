@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ctrd7f5vsvspa"]
+[gd_scene load_steps=5 format=3 uid="uid://ctrd7f5vsvspa"]
 
 [ext_resource type="Script" path="res://Scripts/Components/UI/HUD.cs" id="1_8cpoi"]
 [ext_resource type="PackedScene" uid="uid://b3r88yvohqjhf" path="res://Scenes/Components/UI/DialogueManager.tscn" id="2_e0pfq"]
 [ext_resource type="PackedScene" uid="uid://bpjhtroye3rx2" path="res://Scenes/Components/UI/StatBar.tscn" id="3_ysdtv"]
+[ext_resource type="PackedScene" uid="uid://8n2h0fdahq0d" path="res://Scenes/Components/UI/Inventory.tscn" id="4_dcys3"]
 
 [node name="Hud" type="CanvasLayer"]
 script = ExtResource("1_8cpoi")
@@ -46,3 +47,14 @@ offset_right = 99.0
 offset_bottom = 118.0
 scale = Vector2(1.5, 1.5)
 Tint = Color(0.917969, 0.903625, 0, 1)
+
+[node name="Inventory" parent="." instance=ExtResource("4_dcys3")]
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 1.0
+offset_left = -46.0
+offset_top = -46.0
+offset_right = -46.0
+offset_bottom = -46.0
+grow_horizontal = 0
+grow_vertical = 0

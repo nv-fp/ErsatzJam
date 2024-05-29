@@ -40,6 +40,11 @@ namespace JamEnums {
     public enum Item {
         RedScroll,
         BlueScroll,
+        Sword,
+        Bow,
+        Shield,
+        Apple,
+        Cheese,
     }
 
     static class EnumExtensions {
@@ -84,7 +89,7 @@ namespace JamEnums {
 
             throw new ArgumentException("Unknown effect animation: " + effect);
         }
-    
+
         public static string Name(this Item i) {
             switch (i) {
                 case Item.RedScroll: return "red_scroll";
@@ -92,6 +97,47 @@ namespace JamEnums {
             }
 
             throw new ArgumentException("Invalid item: " + i);
+        }
+
+        public static Texture2D GetTexture(this Item i) {
+            var itemSheet = TextureFactory.Instance.Get("res://Art/ItemSheet.png");
+            var atlasTex = new AtlasTexture();
+            atlasTex.Atlas = itemSheet;
+            var x = 0;
+            var y = 0;
+            switch (i) {
+                case Item.RedScroll:
+                    x = 4;
+                    y = 4;
+                    break;
+                case Item.BlueScroll:
+                    x = 5;
+                    y = 4;
+                    break;
+                case Item.Sword:
+                    x = 0;
+                    y = 0;
+                    break;
+                case Item.Bow:
+                    x = 0;
+                    y = 2;
+                    break;
+                case Item.Shield:
+                    x = 0;
+                    y = 3;
+                    break;
+                case Item.Apple:
+                    x = 0;
+                    y = 8;
+                    break;
+                case Item.Cheese:
+                    x = 1;
+                    y = 8;
+                    break;
+            }
+            atlasTex.Region = new Rect2(x * 16, y * 16, 16, 16);
+            return atlasTex;
+
         }
     }
 }

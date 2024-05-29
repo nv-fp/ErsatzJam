@@ -3,6 +3,7 @@ using JamEnums;
 using Godot;
 
 using System;
+using System.Collections.Generic;
 
 public partial class Player : CharacterBody2D {
     #region player configs
@@ -70,6 +71,8 @@ public partial class Player : CharacterBody2D {
     // used to save dashVelocity at the time of pressing dash
     private Vector2 dashVelocity;
 
+    public Dictionary<JamEnums.Item, int> Inventory { get; private set; }
+
     private bool EffectPlaying() {
         return effectsSprite.IsPlaying();
     }
@@ -105,6 +108,10 @@ public partial class Player : CharacterBody2D {
     [Export] public Color physicsSensorColor = new Color(0f, .1f, 1f, .5f);
     [Export] public Color hitboxSensorColor = new Color(1f, 0, 0, .5f);
     #endregion
+
+    public Player() {
+        Inventory = new Dictionary<JamEnums.Item, int>();
+    }
 
     public override void _Ready() {
         base._Ready();
@@ -211,8 +218,7 @@ public partial class Player : CharacterBody2D {
         if (Juice < points) {
             return false;
         }
-        Juice = Juice - points;
-        HUD.Instance.JuiceBar().SetValue((int)Juice, (int)MaxJuice);
+        Juice -= points;
         return true;
     }
 

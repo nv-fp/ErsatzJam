@@ -1182,4 +1182,20 @@ position = Vector2(225, 184)
 position = Vector2(221, 81)
 Type = 1
 
+[node name="Item3" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(206, -40)
+Type = 2
+
+[node name="Item4" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(8, 160)
+Type = 5
+
+[node name="Item5" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(153, 227)
+Type = 6
+
+[node name="Item6" parent="." instance=ExtResource("3_2ybx2")]
+position = Vector2(107, 11)
+Type = 4
+
 [node name="Hud" parent="." instance=ExtResource("6_wwm44")]

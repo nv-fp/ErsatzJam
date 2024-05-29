@@ -48,7 +48,7 @@ public partial class DialogueManager : Control {
             if (speaker.StartsWith("<")) {
                 var endPortrait = speaker.IndexOf(">");
                 var portrait = speaker.Substr(1, endPortrait - 1);
-                dlg.SetProfile($"res://Art/{portrait}.png");
+                dlg.SetProfile(TextureFactory.Instance.Get($"res://Art/{portrait}.png"));
                 speaker = speaker.Substring(endPortrait + 1);
             }
             dlg.SetSpeaker(speaker);
