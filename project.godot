@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Ersatz Jam"
-run/main_scene="res://Scenes/TestScene.tscn"
+run/main_scene="res://Scenes/Levels/TestScene.tscn"
 config/features=PackedStringArray("4.2", "C#", "Forward Plus")
 
 [display]
