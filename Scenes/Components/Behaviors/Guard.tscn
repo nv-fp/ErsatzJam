@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://bp724mdyem6kw"]
+
+[ext_resource type="Script" path="res://Scripts/Components/Behaviors/Guard.cs" id="1_t0d7n"]
+
+[node name="Guard" type="Node2D"]
+script = ExtResource("1_t0d7n")
+
+[node name="Visual Detection" type="Area2D" parent="."]
+
+[node name="Sensor" type="CollisionPolygon2D" parent="Visual Detection"]
+position = Vector2(0, 4)
+rotation = 3.14159
+polygon = PackedVector2Array(0, 6, -9, 3, -45, -36, -45, -71, -11, -82, 12, -82, 45, -71, 45, -36, 9, 3)
+
+[node name="NavAgent" type="NavigationAgent2D" parent="."]
+path_desired_distance = 1.0
+radius = 2.0
+debug_enabled = true
+debug_path_custom_color = Color(1, 0, 0, 1)
+
+[connection signal="area_entered" from="Visual Detection" to="." method="DetectionAreaEntered"]
+[connection signal="area_exited" from="Visual Detection" to="." method="DetectionAreaExited"]

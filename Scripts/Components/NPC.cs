@@ -5,6 +5,7 @@ using JamEnums;
 public partial class NPC : CharacterBody2D,
     IInteractable<Player>,
     IAttackable {
+    [Export] public BehaviorModel BehaviorModel { get; set; }
 
     [Export] public string name { get; private set; }
 

@@ -47,6 +47,18 @@ namespace JamEnums {
         Cheese,
     }
 
+    public enum BehaviorModel {
+        None,
+        Guard,
+        Civilian,
+    }
+
+    public enum GuardWanderMode {
+        None,
+        Patrol,
+        Wander,
+    }
+
     static class EnumExtensions {
         public static string Name(this MoveMode mode) {
             switch (mode) {
