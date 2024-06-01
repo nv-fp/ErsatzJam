@@ -15,8 +15,24 @@ public partial class NPC : CharacterBody2D,
 
     public int HitPoints { get; set; }
 
-    public NPC() {
+    public AnimatedSprite2D Sprite { get; private set; }
+
+    public override void _Ready() {
         HitPoints = MaxHitPoints;
+        foreach (var child in GetChildren()) {
+            if (child is IBehavior) {
+                GD.Print("Checking " + child.Name);
+                Sprite = child.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+                if (Sprite != null) {
+                    break;
+                }
+            }
+        }
+        if (Sprite == null) {
+            Sprite = GetNode<AnimatedSprite2D>("FallbackAnimatedSprite2D");
+        } else {
+            RemoveChild(GetNode<AnimatedSprite2D>("FallbackAnimatedSprite2D"));
+        }
     }
 
     public void Interact(Player withActor) {
@@ -50,3 +66,4 @@ public partial class NPC : CharacterBody2D,
         }
     }
 }
+;

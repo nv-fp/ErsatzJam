@@ -4,9 +4,8 @@ using JamEnums;
 
 using System;
 
-public partial class Guard : Node2D {
+public partial class Guard : Node2D, IBehavior {
     private NPC npc;
-    private AnimatedSprite2D npcSprite;
     private NavigationAgent2D agent;
     private Polygon2D wanderArea;
 
@@ -29,7 +28,6 @@ public partial class Guard : Node2D {
         }
 
         npc = (NPC)node;
-        npcSprite = npc.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         agent = GetNode<NavigationAgent2D>("NavAgent");
 
         if (WanderMode != GuardWanderMode.None) {
@@ -126,15 +124,6 @@ public partial class Guard : Node2D {
         }
     }
 
-    // TODO: does this even work with c#?
-    public override string[] _GetConfigurationWarnings() {
-        var parent = GetParent();
-        if (parent == null || parent is not NPC) {
-            return new string[] { "Must be attached to an NPC node" };
-        }
-        return new string[] { };
-    }
-
     public float facing;
     public Direction direction;
     public override void _Process(double delta) {
@@ -144,9 +133,9 @@ public partial class Guard : Node2D {
         }
 
         if (npc.Velocity == Vector2.Zero) {
-            npcSprite.Play("idle_" + direction.Name());
+            npc.Sprite.Play("idle_" + direction.Name());
         } else {
-            npcSprite.Play("walk_" + direction.Name());
+            npc.Sprite.Play("walk_" + direction.Name());
         }
     }
 

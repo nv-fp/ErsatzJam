@@ -15,7 +15,7 @@ height = 14.8936
 scale = Vector2(2, 2)
 script = ExtResource("1_evqmi")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="FallbackAnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 position = Vector2(0, -6)
 sprite_frames = ExtResource("2_q0esy")
