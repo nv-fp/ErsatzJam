@@ -15,7 +15,6 @@ polygon = PackedVector2Array(0, 6, -9, 3, -45, -36, -45, -71, -11, -82, 12, -82,
 [node name="NavAgent" type="NavigationAgent2D" parent="."]
 path_desired_distance = 1.0
 radius = 2.0
-debug_enabled = true
 debug_path_custom_color = Color(1, 0, 0, 1)
 
 [connection signal="area_entered" from="Visual Detection" to="." method="DetectionAreaEntered"]

@@ -129,7 +129,6 @@ layer_1/tile_data = PackedInt32Array(0, 1, 2, 65536, 1, 2, 131072, 1, 2, 196608,
 
 [node name="Player" parent="." instance=ExtResource("2_16841")]
 position = Vector2(470, 354)
-collision_mask = 0
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 
@@ -143,25 +142,25 @@ texture = ExtResource("3_chx12")
 texture_scale = 5.0
 
 [node name="Hud" parent="." instance=ExtResource("3_5j37w")]
-visible = false
 
 [node name="DayNightModulate" parent="." instance=ExtResource("5_ah5f1")]
-DayLengthSecs = 60000
+DayLengthSecs = 20
 NightColor = Color(0.47788, 0.47788, 0.47788, 1)
+BeginsDay = false
 
 [node name="Npc" parent="." instance=ExtResource("6_etloo")]
-position = Vector2(305, 459)
+position = Vector2(300, 500)
 
 [node name="Guard" parent="Npc" instance=ExtResource("7_k7xg2")]
 z_index = 2
 WanderMode = 1
-LingerTimeSec = 0
-WalkSpeed = 130
+LingerTimeSec = 2
 
 [node name="Patrol Path" type="Polygon2D" parent="Npc/Guard"]
 scale = Vector2(1.043, 1)
 color = Color(1, 1, 1, 0)
-polygon = PackedVector2Array(234.899, -50, 718.121, 126, 482.263, -86, 683.605, -266, -165.868, -280, -58.4851, -98, -156.28, 92, -3, 83.5)
+polygon = PackedVector2Array(108, -51, 339, 79.5, 254, -70, 370, -141, -95, -182, 8, -110, -92, -56, -3, 84)
 
 [node name="DebugGrid" type="Node2D" parent="."]
+visible = false
 script = ExtResource("9_2qfs2")

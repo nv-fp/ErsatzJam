@@ -6,13 +6,17 @@ using System;
 
 public partial class Guard : Node2D {
     private NPC npc;
+    private AnimatedSprite2D npcSprite;
     private NavigationAgent2D agent;
     private Polygon2D wanderArea;
+
     [Export] public GuardWanderMode WanderMode = GuardWanderMode.None;
     [Export] public int LingerTimeSec = 10;
     [Export] public Vector2[] PatrolPath;
 
     [Export] public int WalkSpeed = 120;
+
+    [Export] public bool DrawDebugOverlay = false;
 
     double hasLingered = 0;
     public GuardBehavior currentBehavior;
@@ -25,6 +29,7 @@ public partial class Guard : Node2D {
         }
 
         npc = (NPC)node;
+        npcSprite = npc.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
         agent = GetNode<NavigationAgent2D>("NavAgent");
 
         if (WanderMode != GuardWanderMode.None) {
@@ -35,21 +40,13 @@ public partial class Guard : Node2D {
                     if (poly.Position != Vector2.Zero) {
                         GD.Print("your patrol path is not centered on your Guard node. Adjusting for this but it may be a mistake.");
                     }
-                    GD.Print("locations");
-                    GD.Print("npc.Scale: " + npc.Scale);
-                    GD.Print($"npc.GlobalPosition: {npc.GlobalPosition}");
-                    GD.Print($"Position: {Position}");
-                    GD.Print($"poly.Position: {poly.Position}");
                     PatrolPath = ((Polygon2D)child).Polygon;
                     child.QueueFree();
                     for (var i = 0; i < PatrolPath.Length; i++) {
-                        var newP_1 = PatrolPath[i] + npc.GlobalPosition;
-                        var newP_2 = Vector2.Zero - (PatrolPath[i] - npc.GlobalPosition);
-                        var newP_3 = npc.GlobalPosition + Position + poly.Position + PatrolPath[i];
-                        var newP_4 = (npc.GlobalPosition * npc.Scale) + (Position * Scale) + (poly.Position * poly.Scale) + PatrolPath[i];
-                        var newP = Vector2.Zero - ((PatrolPath[i] - npc.GlobalPosition) / npc.Scale);
-                        GD.Print($"{PatrolPath[i]} -> {newP_3}"); //  {newP_1}, {newP_2}, {newP_3}, {newP}");
-                        PatrolPath[i] = newP_4;
+                        // convert the path positions into a peer position of the hosting NPC. This assumes that the NavigationRegion2D is also a peer
+                        var newP = npc.GlobalPosition + (Position * npc.Scale) + (poly.Position * npc.Scale * Scale) + (PatrolPath[i] * npc.Scale * Scale * poly.Scale);
+                        GD.Print($"{PatrolPath[i]} -> {newP}");
+                        PatrolPath[i] = newP;
                     }
                     for (var i = 0; i < PatrolPath.Length; i++) {
                         GD.Print($"{i}: {PatrolPath[i]}");
@@ -58,10 +55,8 @@ public partial class Guard : Node2D {
                 }
             }
         }
-        // WanderMode = GuardWanderMode.None;
 
         currentBehavior = WanderMode == GuardWanderMode.None ? GuardBehavior.Halt : GuardBehavior.Travel;
-        GD.Print("currentBehavior: " + currentBehavior);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -90,6 +85,7 @@ public partial class Guard : Node2D {
     }
     private void DoWander(double delta) {
         if (agent.IsNavigationFinished()) {
+            npc.Velocity = Vector2.Zero;
             if (hasLingered < LingerTimeSec) {
                 hasLingered += delta;
                 return;
@@ -101,6 +97,7 @@ public partial class Guard : Node2D {
         }
 
         var direction = (agent.GetNextPathPosition() - npc.GlobalPosition).Normalized();
+
         npc.Velocity = direction * WalkSpeed;
         npc.MoveAndSlide();
     }
@@ -117,26 +114,16 @@ public partial class Guard : Node2D {
     #endregion
 
     public override void _Draw() {
-        base._Draw();
-        var adjustedPosition = npc.GlobalPosition * npc.Scale;
-        foreach (var p in PatrolPath) {
-            // DrawCircle(p - npc.Position, 15, Colors.Blue);
-            DrawCircle((p - adjustedPosition), 10, Colors.Red);
-            DrawCircle(Vector2.Zero - adjustedPosition + p, 7, Colors.Green);
-            // DrawCircle(p, 5, Colors.Purple); -- wrong
+
+        if (DrawDebugOverlay) {
+            // A - B => ->BA
+            foreach (var p in PatrolPath) {
+                DrawCircle((p - npc.Position), 10, Colors.Red);
+                DrawCircle((p - npc.Position) / npc.Scale, 7, Colors.Green);
+            }
+
+            DrawLine(Position, Position + npc.Velocity, Colors.Blue);
         }
-
-
-        /*
-        DrawCircle(npc.GlobalPosition, 5, Colors.SeaGreen);
-        DrawCircle(GlobalPosition, 8, Colors.CornflowerBlue);
-        DrawCircle(npc.Position, 10, Colors.AliceBlue);
-
-        DrawCircle(Vector2.Zero, 5, Colors.Green);
-        DrawCircle(new Vector2(100, 100), 5, Colors.Orange);
-        DrawCircle(new Vector2(250, 250), 5, Colors.RoyalBlue);
-        */
-        DrawLine(npc.GlobalPosition, (npc.GlobalPosition + npc.Velocity), Colors.Blue);
     }
 
     // TODO: does this even work with c#?
@@ -147,6 +134,37 @@ public partial class Guard : Node2D {
         }
         return new string[] { };
     }
+
+    public float facing;
+    public Direction direction;
+    public override void _Process(double delta) {
+        if (npc.Velocity != Vector2.Zero) {
+            facing = npc.Velocity.AngleTo(Vector2.Up);
+            direction = angleToDirection(facing);
+        }
+
+        if (npc.Velocity == Vector2.Zero) {
+            npcSprite.Play("idle_" + direction.Name());
+        } else {
+            npcSprite.Play("walk_" + direction.Name());
+        }
+    }
+
+    private Direction angleToDirection(double angle) {
+        var normalized = angle / (Math.PI * 2) * 360;
+        switch (Math.Abs(normalized)) {
+            case <= 45:
+                return Direction.Up;
+            case <= 135:
+                return normalized < 0
+                    ? Direction.Right
+                    : Direction.Left;
+            case <= 180:
+                return Direction.Down;
+        }
+        return Direction.Up;
+    }
+
 }
 
 public enum GuardBehavior {
