@@ -72,9 +72,9 @@ I can't find documentation of this but I think it may be true and I'm pretty sur
 **On handling sprite animations**  
 Godot leans super hard into in-editor definitions for everything but stuff like animation. We will almost certainly need to work on pipeline tooling for this. I never want to spend another minute of my life cutting sprite sheets into animation frames manually.
 
-We'll need to coordinate with the art team to agree upon some format or find some common export format that existing addons support. There are some addons that promise to add
+We'll need to coordinate with the art team to agree upon some format or find some common export format that existing addons support. There are [some addons](https://godotengine.org/asset-library/asset?filter=spritesheet&category=&godot_version=&cost=&sort=updated) that suggest a path forward but the process of finding a good one, vetting it, customizing as needed, etc may not be worth the time investment when building something in house. The fully home grown solution here is not a huge investment as far as I can tell.
 
-Additionally if we want to coordinate callbacks into our animations that doesn't come for free for `AnimatedSprite2D` and we'll need to extend it / override `OnFrameChanged` and watch for the frame triggers we've defined.
+Finally: if we want to coordinate function callbacks/triggers into our animations that doesn't come for free for `AnimatedSprite2D` and we'll need to extend it / override `OnFrameChanged` and watch for the behaviors we've defined (in whatever magical format we've decided on above).
 
 **Sprite Atlases**  
 Okay, so this is basically the same issue as animations but loading sprites from an atlas is a trash fire. There is no blessed approach (caveat: that I've seen) for a configurable / loadable solution to get a Sprite/Texture2D. Basically any time you want to pull something from an atlas you're going to be manually constructing a new AtlasTexture and digging out the offset/h/w data and baking it in code. The process makes me want to die.
