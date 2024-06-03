@@ -18,7 +18,7 @@ Fixed that waypoint scaling bug; bonus appearance of the agent getting stuck at 
 
 ## Lesson Summary
 
-Here's some of the major things I learned vs my last dance with Godot.
+Here's some of the major things I learned vs my last dance with Godot. Everything below is in the realm of "strong opinions loosely held" in that I distinctly think that my statements are well supported but realize that I'm still new to the platform and would welcome push back or to be told I'm doing it wrong and the correct way is \_\_\_\_\_.
 
 **Tilemaps**  
 First party tilemap support is "not great" (afaict, ymmv). IMO it will be extremely worthwhile to explore some of the Tiled integration addons. [YATI](https://godotengine.org/asset-library/asset/1772) seems promising.
@@ -75,3 +75,8 @@ Godot leans super hard into in-editor definitions for everything but stuff like 
 We'll need to coordinate with the art team to agree upon some format or find some common export format that existing addons support. There are some addons that promise to add
 
 Additionally if we want to coordinate callbacks into our animations that doesn't come for free for `AnimatedSprite2D` and we'll need to extend it / override `OnFrameChanged` and watch for the frame triggers we've defined.
+
+**Sprite Atlases**  
+Okay, so this is basically the same issue as animations but loading sprites from an atlas is a trash fire. There is no blessed approach (caveat: that I've seen) for a configurable / loadable solution to get a Sprite/Texture2D. Basically any time you want to pull something from an atlas you're going to be manually constructing a new AtlasTexture and digging out the offset/h/w data and baking it in code. The process makes me want to die.
+
+As above we'll want to settle on some consistent format so that we solve this once and then can pull named textures from an atlas instead of the painful alternative. An extremely coarse solution might look like a thing I did for the Godot Wild Jam I did: [config](https://github.com/nv-fp/Helter-Smelter/blob/main/config/atlas.cfg) + [config load](https://github.com/nv-fp/Helter-Smelter/blob/main/scripts/WantBubbleFactory.gd#L24) + [texture load](https://github.com/nv-fp/Helter-Smelter/blob/main/scripts/WantBubbleFactory.gd#L102). Note I explicitly don't think the jam thing is a viable solution for a real project but it's directionally correct.
