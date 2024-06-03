@@ -1,6 +1,6 @@
 # ErsatzJam
 
-ErsatzJam is ... not exactly a jam game. Basically I paired up with a narrative friend for a bit of accountability as we did some exploration in a way that would flex creative muscles that would be used on a larger upcoming project. The scope was intentionally too large for the team and, at least for me, I pushed it into bits of the platform that I was unfamiliar with.
+ErsatzJam is ... not exactly a jam game. Basically I paired up with a narrative friend for a bit of accountability as we did some exploration that would flex creative muscles in preparation for an upcoming project. The scope was intentionally too large for the team and, at least for me, I pushed it into bits of the platform that I was unfamiliar with.
 
 ## Results
 
