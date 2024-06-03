@@ -23,7 +23,7 @@ Here's some of the major things I learned vs my last dance with Godot. Everythin
 **Tilemaps**  
 First party tilemap support is "not great" (afaict, ymmv). IMO it will be extremely worthwhile to explore some of the Tiled integration addons. [YATI](https://godotengine.org/asset-library/asset/1772) seems promising.
 
-I did not love lighting on a per-tile model as it caused self-shadowing and did allow for multiple occluder poly settings: open/closed setting or cull mode. A [related complaint](https://forum.godotengine.org/t/disabling-self-shading-on-tilemaps-in-godot-4/36987/4) That work around _probably_ solves the problem but it's a pain in the ass. I _think_ I also witnessed discontinuous shadow casting as well but don't have hard evidence off hand.
+I did not love lighting on a per-tile model as it caused self-shadowing and didn't allow for multiple occluder poly settings: open/closed setting or cull mode. A [related complaint](https://forum.godotengine.org/t/disabling-self-shading-on-tilemaps-in-godot-4/36987/4) That work around _probably_ solves the problem but it's a pain in the ass. I _think_ I also witnessed discontinuous shadow casting as well but don't have hard evidence off hand.
 
 Lighting on tiles seems to be more angular than ideal though this could very well be a me problem. I'm not 100% certain that tilemaps are the right path forward vs hand-painted backgrounds laid down in large chunks as sprites and with custom load/unloading logic to manage performance.
 
