@@ -64,6 +64,11 @@ Anyway, this isn't any fundamental lesson so much as "don't make this mistake ag
 **Navigation 2**  
 Once I got the above bug sorted I noticed that from time to time the nav agent got stuck on nothing and left the guided agent bouncing / vibrating between two points. I was able to unstick them consistently buy nudging with another rigid body. Any timing-based guard puzzles must have a solution or understanding of this. I haven't done any digging here but I can't imagine it's a unique issue.
 
+**Navigation Honorable Mention**  
+I can't find documentation of this but I think it may be true and I'm pretty sure I got it from one of the threads/guides I was reading...
+
+`NavigationRegion2D` will only bake the Layer0 into a navmesh which is (technical term) "some fucking bullshit."
+
 **On handling sprite animations**  
 Godot leans super hard into in-editor definitions for everything but stuff like animation. We will almost certainly need to work on pipeline tooling for this. I never want to spend another minute of my life cutting sprite sheets into animation frames manually.
 
