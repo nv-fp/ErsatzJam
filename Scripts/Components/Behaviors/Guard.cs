@@ -42,7 +42,7 @@ public partial class Guard : Node2D, IBehavior {
                     child.QueueFree();
                     for (var i = 0; i < PatrolPath.Length; i++) {
                         // convert the path positions into a peer position of the hosting NPC. This assumes that the NavigationRegion2D is also a peer
-                        var newP = npc.GlobalPosition + (Position * npc.Scale) + (poly.Position * npc.Scale * Scale) + (PatrolPath[i] * npc.Scale * Scale * poly.Scale);
+                        var newP = npc.Position + (Position * npc.Scale) + (poly.Position * npc.Scale * Scale) + (PatrolPath[i] * npc.Scale * Scale * poly.Scale);
                         GD.Print($"{PatrolPath[i]} -> {newP}");
                         PatrolPath[i] = newP;
                     }

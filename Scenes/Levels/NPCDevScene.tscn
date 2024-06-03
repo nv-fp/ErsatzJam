@@ -142,10 +142,12 @@ texture = ExtResource("3_chx12")
 texture_scale = 5.0
 
 [node name="Hud" parent="." instance=ExtResource("3_5j37w")]
+visible = false
 
 [node name="DayNightModulate" parent="." instance=ExtResource("5_ah5f1")]
+visible = false
 DayLengthSecs = 20
-NightColor = Color(0.47788, 0.47788, 0.47788, 1)
+NightColor = Color(0, 0, 0, 1)
 BeginsDay = false
 
 [node name="Npc" parent="." instance=ExtResource("6_etloo")]
